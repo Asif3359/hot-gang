@@ -2,9 +2,11 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import type { TeamMember } from "@/app/types/team";
+import { getJurcyNumber } from "@/app/types/team";
 
-const SIZES = ["XS", "S", "M", "L", "XL", "XXL"];
+const SIZES = ["S", "M", "L", "XL", "2XL", "3XL", "4XL"];
 
 export default function SubmitPage() {
   const router = useRouter();
@@ -14,6 +16,24 @@ export default function SubmitPage() {
   const [phone, setPhone] = useState("");
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
+  const [takenJerseyNumbers, setTakenJerseyNumbers] = useState<Set<string>>(new Set());
+
+  useEffect(() => {
+    fetch("/api/team")
+      .then((res) => (res.ok ? res.json() : []))
+      .then((data: TeamMember[] | { error?: string }) => {
+        if (Array.isArray(data)) {
+          const taken = new Set(
+            data.map((m) => (getJurcyNumber(m) ?? "").trim()).filter(Boolean)
+          );
+          setTakenJerseyNumbers(taken);
+        }
+      })
+      .catch(() => {});
+  }, []);
+
+  const jerseyTaken =
+    jerseyNumber.trim() !== "" && takenJerseyNumbers.has(jerseyNumber.trim());
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -84,20 +104,36 @@ export default function SubmitPage() {
             <label htmlFor="jerseyNumber" className="block text-sm font-medium text-amber-100">
               Jersey number
             </label>
+            <p className="mt-0.5 text-xs text-zinc-500">
+              Each number can only be chosen once. If someone has already taken it, pick another.
+            </p>
             <input
               id="jerseyNumber"
               type="text"
               required
               value={jerseyNumber}
               onChange={(e) => setJerseyNumber(e.target.value)}
-              className="mt-1 w-full rounded-lg border border-zinc-600 bg-zinc-800/50 px-4 py-2.5 text-zinc-100 placeholder-zinc-500 focus:border-amber-500 focus:outline-none focus:ring-1 focus:ring-amber-500"
+              className={`mt-1 w-full rounded-lg border bg-zinc-800/50 px-4 py-2.5 text-zinc-100 placeholder-zinc-500 focus:outline-none focus:ring-1 ${
+                jerseyTaken
+                  ? "border-red-500 focus:border-red-500 focus:ring-red-500"
+                  : "border-zinc-600 focus:border-amber-500 focus:ring-amber-500"
+              }`}
               placeholder="e.g. 7"
+              aria-invalid={jerseyTaken}
             />
+            {jerseyTaken && (
+              <p className="mt-1.5 text-sm text-red-400">
+                This jersey number is already taken. Please choose another.
+              </p>
+            )}
           </div>
           <div>
             <label htmlFor="size" className="block text-sm font-medium text-amber-100">
               Size
             </label>
+            <p className="mt-0.5 text-xs text-zinc-500">
+              Check the size chart on the home page (Chest & Height in inches) if you need help.
+            </p>
             <select
               id="size"
               required
@@ -136,7 +172,7 @@ export default function SubmitPage() {
 
           <button
             type="submit"
-            disabled={loading}
+            disabled={loading || jerseyTaken}
             className="w-full rounded-full bg-amber-500 py-3 font-semibold text-zinc-900 transition hover:bg-amber-400 disabled:opacity-50 disabled:pointer-events-none focus:outline-none focus:ring-2 focus:ring-amber-400 focus:ring-offset-2 focus:ring-offset-zinc-900"
           >
             {loading ? "Saving…" : "Save"}

@@ -40,6 +40,47 @@ export default async function Home({
           </Link>
         </section>
 
+        {/* Size chart – help to choose */}
+        <section className="mt-12 rounded-2xl border border-zinc-700/50 bg-zinc-800/30 p-6 sm:p-8">
+          <h2 className="text-xl font-bold text-zinc-100 sm:text-2xl">
+            Our Size Chart
+          </h2>
+          <p className="mt-1 text-sm text-zinc-500">
+            Use this to pick your size when submitting. All measurements are in inches.
+          </p>
+          <div className="mt-4 overflow-x-auto">
+            <table className="w-full min-w-[280px] border-collapse text-left">
+              <thead>
+                <tr className="border-b border-zinc-600">
+                  <th className="py-3 pr-4 font-semibold text-zinc-200">SIZE</th>
+                  <th className="py-3 pr-4 font-semibold text-zinc-200">CHEST</th>
+                  <th className="py-3 font-semibold text-zinc-200">HEIGHT</th>
+                </tr>
+              </thead>
+              <tbody className="text-zinc-300">
+                {[
+                  { size: "S", chest: 36, height: 26 },
+                  { size: "M", chest: 38, height: 27 },
+                  { size: "L", chest: 40, height: 28 },
+                  { size: "XL", chest: 42, height: 29 },
+                  { size: "2XL", chest: 44, height: 30 },
+                  { size: "3XL", chest: 46, height: 31 },
+                  { size: "4XL", chest: 48, height: 32 },
+                ].map((row) => (
+                  <tr key={row.size} className="border-b border-zinc-700/70">
+                    <td className="py-2.5 pr-4 font-medium">{row.size}</td>
+                    <td className="py-2.5 pr-4">{row.chest} in</td>
+                    <td className="py-2.5">{row.height} in</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          <p className="mt-3 text-xs text-zinc-500">
+            All size measurements are in inch.
+          </p>
+        </section>
+
         {/* Who has which jury number */}
         <section className="mt-12">
           <h2 className="mb-4 text-xl font-bold text-zinc-100 sm:text-2xl">

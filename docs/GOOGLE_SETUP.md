@@ -61,6 +61,7 @@ function jsonResponse(obj) {
 }
 
 // Append a row when the website submits the form (POST from Next.js).
+// Uniqueness: only jersey number must be unique (one per member); no size+number check.
 function doPost(e) {
   try {
     var body = e.postData ? JSON.parse(e.postData.contents) : {};
@@ -90,8 +91,9 @@ function doPost(e) {
       data = [headers];
     }
     var jerseyCol = -1;
+    var jerseyNames = ["jersey Number", "Jurcy Number", "jerseyNumber"];
     for (var h = 0; h < headers.length; h++) {
-      if (headers[h] === "jersey Number" || headers[h] === "Jurcy Number") {
+      if (jerseyNames.indexOf(headers[h]) !== -1) {
         jerseyCol = h;
         break;
       }
@@ -156,6 +158,7 @@ function jsonResponse(obj) {
   );
 }
 
+// Uniqueness: only jersey number must be unique (one per member); no size+number check.
 function doPost(e) {
   try {
     var body = e.postData ? JSON.parse(e.postData.contents) : {};
@@ -185,8 +188,9 @@ function doPost(e) {
       data = [headers];
     }
     var jerseyCol = -1;
+    var jerseyNames = ["jersey Number", "Jurcy Number", "jerseyNumber"];
     for (var h = 0; h < headers.length; h++) {
-      if (headers[h] === "jersey Number" || headers[h] === "Jurcy Number") {
+      if (jerseyNames.indexOf(headers[h]) !== -1) {
         jerseyCol = h;
         break;
       }
